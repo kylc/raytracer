@@ -2,10 +2,11 @@ use std::num::Float;
 use std::f32::consts::{PI_2, PI};
 use rand::random;
 use na::{Dot, Norm, Pnt3, Vec3};
+use intersection::Intersection;
 use ray::Ray;
 
 trait Surface {
-    fn intersects(&self, ray: &Ray) -> bool;
+    fn intersects(&self, ray: &Ray) -> Option<Intersection>;
 }
 
 pub struct Sphere {
@@ -20,7 +21,7 @@ impl Sphere {
 }
 
 impl Surface for Sphere {
-    fn intersects(&self, ray: &Ray) -> bool {
+    fn intersects(&self, ray: &Ray) -> Option<Intersection> {
         // Equations taken from http://en.wikipedia.org/wiki/Line–sphere_intersection
         let oc = ray.origin - self.center;
         let a = ray.direction.sqnorm();
@@ -32,9 +33,13 @@ impl Surface for Sphere {
         if det2 >= 0.0 {
             let det = det2.sqrt();
             let dist = (-b + det).min(-b - det);
-            true
+
+            Some(Intersection {
+                distance: dist,
+                point: ray.origin + ray.direction * dist
+            })
         } else {
-            false
+            None
         }
     }
 }
@@ -64,7 +69,7 @@ fn sphere_test() {
         let ray = Ray::new_from_air(origin, pnt - origin);
 
         // Check for intersection
-        assert!(sphere1.intersects(&ray));
+        assert!(sphere1.intersects(&ray).is_some());
     }
 
     // // Find a bunch of random points outside the sphere
