@@ -4,5 +4,8 @@ name = "renderer"
 version = "0.0.1"
 authors = ["Kyle Cesare <kcesare@gmail.com>"]
 
+[dependencies]
+rand = "0.1.3"
+
 [dependencies.nalgebra]
 git = "https://github.com/sebcrozet/nalgebra"
