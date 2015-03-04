@@ -3,3 +3,6 @@
 name = "renderer"
 version = "0.0.1"
 authors = ["Kyle Cesare <kcesare@gmail.com>"]
+
+[dependencies.nalgebra]
+git = "https://github.com/sebcrozet/nalgebra"
