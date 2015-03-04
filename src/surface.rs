@@ -6,6 +6,7 @@ use intersection::Intersection;
 use ray::Ray;
 
 trait Surface {
+    // Check if a ray intersects with the surface.
     fn intersects(&self, ray: &Ray) -> Option<Intersection>;
 }
 
@@ -24,11 +25,16 @@ impl Surface for Sphere {
     fn intersects(&self, ray: &Ray) -> Option<Intersection> {
         // Equations taken from http://en.wikipedia.org/wiki/Line–sphere_intersection
         let oc = ray.origin - self.center;
+
+        // Find quadratic equation coefficients.
         let a = ray.direction.sqnorm();
         let b = 2.0 * ray.direction.dot(&oc);
         let c = oc.sqnorm() - self.radius.powi(2);
 
-        // x = -b +- sqrt(b^2 - 4ac) / 2a
+        // Three options based on the value of det^2:
+        // 1) det^2 < 0.0: no solutions
+        // 2) det^2 = 0.0: one solution
+        // 3) det^2 > 0.0: two solutions (pick the closest)
         let det2 = b.powi(2) - 4.0 * a * c;
         if det2 >= 0.0 {
             let det = det2.sqrt();
