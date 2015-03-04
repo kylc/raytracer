@@ -12,6 +12,8 @@ pub struct Ray {
 }
 
 impl Ray {
+    // Create a new ray from the given origin in the given direction where the
+    // index of refraction is assumed to be that of air.
     fn new_from_air(origin: Pnt3<f32>, direction: Vec3<f32>) -> Ray {
         Ray {
             origin: origin,
