@@ -1,3 +1,5 @@
+#![feature(core)]
+
 extern crate rand;
 extern crate "nalgebra" as na;
 
