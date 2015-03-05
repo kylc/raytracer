@@ -67,6 +67,17 @@ impl ReflectiveMaterial for PerfectDiffuseMaterial {
     }
 }
 
+pub struct PerfectSpecularMaterial;
+
+impl ReflectiveMaterial for PerfectSpecularMaterial {
+    fn bounce(&self, incoming: &Ray, intersection: &Intersection) -> Ray {
+        let direction = incoming.direction - intersection.normal
+            * 2.0 * incoming.direction.dot(&intersection.normal);
+
+        Ray::new_from_air(incoming.origin, direction)
+    }
+}
+
 pub struct PerfectRefractiveMaterial {
     pub index_of_refraction: f32
 }

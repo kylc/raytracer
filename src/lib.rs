@@ -9,6 +9,6 @@ pub mod intersection;
 pub mod material;
 pub mod object;
 pub mod ray;
-pub mod renderer;
+pub mod render;
 pub mod scene;
 pub mod surface;
