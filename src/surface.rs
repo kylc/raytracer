@@ -17,6 +17,8 @@ pub struct Sphere {
 
 impl Sphere {
     fn get_normal(&self, point: Pnt3<f32>) -> Vec3<f32> {
+        // The normal is a ray traced from the center of the sphere to the given
+        // point, normalized.
         (point - self.center).normalize()
     }
 }

@@ -1,5 +1,7 @@
 use na::{Pnt3, Vec3};
 
+static INDEX_OF_REFRACTION_AIR: f32 = 1.000293;
+
 pub struct Ray {
     // The starting point of the ray.
     pub origin: Pnt3<f32>,
@@ -18,7 +20,7 @@ impl Ray {
         Ray {
             origin: origin,
             direction: direction,
-            index_of_refraction: 1.000293
+            index_of_refraction: INDEX_OF_REFRACTION_AIR
         }
     }
 }
