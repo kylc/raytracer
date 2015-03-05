@@ -1,5 +1,6 @@
 use rand::random;
 use na::{DMat, Vec3};
+use camera::Camera;
 
 pub struct RenderProperties {
     pub width: usize,
@@ -8,7 +9,7 @@ pub struct RenderProperties {
     pub max_bounces: u32
 }
 
-pub fn render(properties: &RenderProperties) -> DMat<Vec3<f32>> {
+pub fn render(properties: &RenderProperties, camera: &Camera) -> DMat<Vec3<f32>> {
     let mut screen = DMat::new_zeros(properties.width, properties.height);
 
     for x in 0..properties.width {
@@ -24,8 +25,8 @@ pub fn render(properties: &RenderProperties) -> DMat<Vec3<f32>> {
 
             // Generate a ray from the camera origin through the current
             // position on the screen (plus some jitter).
-            // let ray = camera.get_ray(normalized_position.0 + jitter.0,
-            //                          normalized_position.1 + jitter.1);
+            let ray = camera.get_ray(normalized_position.0 + jitter.0,
+                                     normalized_position.1 + jitter.1);
         }
     }
 
