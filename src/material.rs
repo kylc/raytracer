@@ -8,7 +8,7 @@ pub enum Material {
 }
 
 pub struct EmissiveMaterial {
-    emissivity: f32
+    pub emissivity: f32
 }
 
 pub trait ReflectiveMaterial {

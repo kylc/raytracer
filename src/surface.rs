@@ -1,6 +1,4 @@
 use std::num::Float;
-use std::f32::consts::{PI_2, PI};
-use rand::random;
 use na::{Dot, Norm, Pnt3, Vec3};
 use intersection::Intersection;
 use ray::Ray;
@@ -16,7 +14,7 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    fn get_normal(&self, point: Pnt3<f32>) -> Vec3<f32> {
+    pub fn get_normal(&self, point: Pnt3<f32>) -> Vec3<f32> {
         // The normal is a ray traced from the center of the sphere to the given
         // point, normalized.
         (point - self.center).normalize()
