@@ -6,19 +6,12 @@ use ray::Ray;
 pub trait Surface {
     // Check if a ray intersects with the surface.
     fn intersects(&self, ray: &Ray) -> Option<Intersection>;
+    fn normal_towards(&self, Pnt3<f32>) -> Vec3<f32>;
 }
 
 pub struct Sphere {
     pub center: Pnt3<f32>,
     pub radius: f32
-}
-
-impl Sphere {
-    pub fn get_normal(&self, point: Pnt3<f32>) -> Vec3<f32> {
-        // The normal is a ray traced from the center of the sphere to the given
-        // point, normalized.
-        (point - self.center).normalize()
-    }
 }
 
 impl Surface for Sphere {
@@ -44,12 +37,15 @@ impl Surface for Sphere {
             // Choose the intersection with the minimum distance.
             let dist = (-b + det).min(-b - det);
 
-            Some(Intersection {
-                distance: dist,
-                position: ray.origin + ray.direction * dist
-            })
+            Some(Intersection::new_from_distance(dist, ray, self))
         } else {
             None
         }
+    }
+
+    fn normal_towards(&self, point: Pnt3<f32>) -> Vec3<f32> {
+        // The normal is a ray traced from the center of the sphere to the given
+        // point, normalized.
+        (point - self.center).normalize()
     }
 }
