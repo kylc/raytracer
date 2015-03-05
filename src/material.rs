@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 use std::num::Float;
 use rand::random;
-use na::Vec3;
+use na::{Dot, Vec3};
 use intersection::Intersection;
 use ray::Ray;
 
@@ -37,13 +37,24 @@ fn random_vec_on_hemnisphere(normal: Vec3<f32>) -> Vec3<f32> {
     let r = random::<f32>().sqrt();
     let theta = 2.0 * PI * random::<f32>();
 
+    // Convert polar to Cartesian.
     let x = r * theta.cos();
     let y = r * theta.sin();
 
     // TODO: Should this be another random variable, or u1?
     let z = (1.0 - random::<f32>()).sqrt();
 
-    Vec3::new(x, y, z)
+    // Generate the vector about the xy-plane.
+    let v = Vec3::new(x, y, z);
+
+    // This vector is either within the hemnisphere or in the opposite
+    // direction. Correct it if needed.
+    // TODO: Does this preserve the distribution?
+    if v.dot(&normal) > 0.0 {
+        v
+    } else {
+        -v
+    }
 }
 
 impl ReflectiveMaterial for PerfectDiffuseMaterial {
