@@ -5,9 +5,10 @@ use na::{Dot, Vec3};
 use intersection::Intersection;
 use ray::Ray;
 
-pub enum Material {
-    Emissive(EmissiveMaterial),
-    Reflective(ReflectiveMaterial)
+// TODO: Boxing the enum rather than the individual components causes an ICE.
+pub enum MaterialBox {
+    Emissive(Box<EmissiveMaterial>),
+    Reflective(Box<ReflectiveMaterial>)
 }
 
 pub struct EmissiveMaterial {

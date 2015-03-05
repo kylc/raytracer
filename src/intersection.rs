@@ -2,6 +2,7 @@ use na::{Pnt3, Vec3};
 use ray::Ray;
 use surface::Surface;
 
+#[derive(Copy)]
 pub struct Intersection {
     // The distance from the ray origin of the intersection.
     pub distance: f32,
