@@ -5,5 +5,5 @@ pub struct Intersection {
     pub distance: f32,
 
     // The point at which the intersection occured.
-    pub point: Pnt3<f32>,
+    pub position: Pnt3<f32>,
 }

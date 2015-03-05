@@ -1,11 +1,4 @@
-#![feature(core)]
-
-extern crate rand;
-extern crate "nalgebra" as na;
-
-mod intersection;
-mod ray;
-mod surface;
+extern crate renderer;
 
 fn main() {
     println!("Hello, world!");

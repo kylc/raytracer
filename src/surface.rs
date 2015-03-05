@@ -5,7 +5,7 @@ use na::{Dot, Norm, Pnt3, Vec3};
 use intersection::Intersection;
 use ray::Ray;
 
-trait Surface {
+pub trait Surface {
     // Check if a ray intersects with the surface.
     fn intersects(&self, ray: &Ray) -> Option<Intersection>;
 }
@@ -31,72 +31,25 @@ impl Surface for Sphere {
         let b = 2.0 * ray.direction.dot(&oc);
         let c = oc.sqnorm() - self.radius.powi(2);
 
+        let det2 = b.powi(2) - 4.0 * a * c;
+
         // Three options based on the value of det^2:
         // 1) det^2 < 0.0: no solutions
         // 2) det^2 = 0.0: one solution
         // 3) det^2 > 0.0: two solutions (pick the closest)
-        let det2 = b.powi(2) - 4.0 * a * c;
         if det2 >= 0.0 {
+            // Only sqrt det once we know we have to.
             let det = det2.sqrt();
+
+            // Choose the intersection with the minimum distance.
             let dist = (-b + det).min(-b - det);
 
             Some(Intersection {
                 distance: dist,
-                point: ray.origin + ray.direction * dist
+                position: ray.origin + ray.direction * dist
             })
         } else {
             None
         }
     }
-}
-
-#[test]
-fn sphere_test() {
-    // Generate a sphere
-    let sphere1 = Sphere {
-        center: Pnt3::new(5.0, 10.0, 0.0),
-        radius: 1.0
-    };
-
-    // Find a bunch of random points in the sphere
-    for i in 0..100 {
-        // Generate random spherical coordinates
-        let r = random::<f32>();
-        let theta = random::<f32>() * PI;
-        let phi = random::<f32>() * PI_2;
-
-        // Convert to Cartesian
-        let pnt = Pnt3::new(sphere1.center.x + r * theta.sin() * phi.cos(),
-                            sphere1.center.y + r * theta.sin() * phi.sin(),
-                            sphere1.center.z + r * theta.cos());
-        
-        // Cast a ray to this point from somewhere else
-        let origin = Pnt3::new(0.0, 0.0, -100.0);
-        let ray = Ray::new_from_air(origin, pnt - origin);
-
-        // Check for intersection
-        assert!(sphere1.intersects(&ray).is_some());
-    }
-
-    // // Find a bunch of random points outside the sphere
-    // for i in 0..100 {
-    //     // Generate random spherical coordinates
-    //     let r = random::<f32>() + 1.1;
-    //     let theta = random::<f32>() * PI;
-    //     let phi = random::<f32>() * PI_2;
-    //
-    //     // Convert to Cartesian
-    //     let pnt = Pnt3::new(sphere1.center.x + r * theta.sin() * phi.cos(),
-    //                         sphere1.center.y + r * theta.sin() * phi.sin(),
-    //                         sphere1.center.z + r * theta.cos());
-    //     
-    //     // Cast a ray to this point from somewhere else
-    //     let origin = (sphere1.get_normal(pnt) * 100.0).to_pnt();
-    //     let ray = Ray::new_from_air(origin, pnt - origin);
-    //
-    //     println!("Testing from {}, {}, {}", origin.x, origin.y, origin.z);
-    //     println!("Testing to {}, {}, {}", pnt.x, pnt.y, pnt.z);
-    //     // Check for intersection
-    //     assert!(!sphere1.intersects(&ray));
-    // }
 }
