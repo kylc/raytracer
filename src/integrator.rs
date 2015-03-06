@@ -1,4 +1,5 @@
 use na::Vec3;
+use rand::random;
 use camera::Camera;
 use material::MaterialBox;
 use ray::Ray;
@@ -14,6 +15,10 @@ pub trait Integrator {
 pub struct MonteCarloIntegrator<'a> {
     pub camera: &'a Camera,
     pub scene: &'a Scene<'a>,
+
+    // Image dimensions.
+    pub width: usize,
+    pub height: usize,
 
     // How many samples should be collected for each pixel.
     pub samples_per_pixel: u32,
@@ -58,15 +63,19 @@ impl<'a> MonteCarloIntegrator<'a> {
 
 impl<'a> Integrator for MonteCarloIntegrator<'a> {
     fn integrate(&self, (x, y): (f32, f32)) -> Vec3<f32> {
-        // Generate a ray from the camera origin through the current position on
-        // the screen.
-        // TODO: Need to jitter for every individual sample.
-        let ray = self.camera.get_ray(x, y);
-
         let mut color = Vec3::new(0.0, 0.0, 0.0); 
-        for sample in 0..self.samples_per_pixel {
-            let contribution = self.trace_with_depth(&ray, self.max_boundes);
 
+        for sample in 0..self.samples_per_pixel {
+            // Perturb the ray for this sample by a small amount, but keep it
+            // within the pixel boundaries.
+            let jitter = ((random::<f32>() - 0.5) / self.width as f32,
+                          (random::<f32>() - 0.5) / self.height as f32);
+
+            // Generate a ray from the camera origin through the current position on
+            // the screen.
+            let ray = self.camera.get_ray(x + jitter.0, y + jitter.1);
+
+            let contribution = self.trace_with_depth(&ray, self.max_boundes);
             color = color + contribution / self.samples_per_pixel as f32;
         }
 

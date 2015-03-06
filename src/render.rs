@@ -15,6 +15,8 @@ pub fn render(properties: &RenderProperties, camera: &Camera, scene: &Scene) -> 
     let mut screen = DMat::new_zeros(properties.width, properties.height);
     let integrator = MonteCarloIntegrator {
         camera: &camera,
+        width: properties.width,
+        height: properties.height,
         samples_per_pixel: properties.samples_per_pixel,
         max_boundes: properties.max_bounces,
         scene: scene
@@ -27,12 +29,7 @@ pub fn render(properties: &RenderProperties, camera: &Camera, scene: &Scene) -> 
             let normalized_position = ( 1.0 * (x as f32 / properties.width as f32 * 2.0 - 1.0),
                                        -1.0 * (y as f32 / properties.height as f32 * 2.0 - 1.0));
 
-            // Perturb the ray for this sample by a small amount.
-            let jitter = ((random::<f32>() - 0.5) / properties.width as f32,
-                          (random::<f32>() - 0.5) / properties.height as f32);
-
-            let color = integrator.integrate((normalized_position.0 + jitter.0,
-                                              normalized_position.1 + jitter.1));
+            let color = integrator.integrate((normalized_position.0, normalized_position.1));
 
             screen.set((x, y), color);
         }
