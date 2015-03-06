@@ -11,24 +11,36 @@ use renderer::*;
 
 fn main() {
     let props = render::RenderProperties {
-        width: 200,
-        height: 200,
-        samples_per_pixel: 200,
-        max_bounces: 5
+        width: 300,
+        height: 300,
+        samples_per_pixel: 300,
+        max_bounces: 6
     };
 
     let camera = camera::Camera {
-        position: Pnt3::new(0.0, 0.0, -1.0),
+        position: Pnt3::new(0.0, 0.0, -2.0),
         direction: Vec3::new(0.0, 0.0, 1.0)
     };
 
     let sphere1 = surface::Sphere {
+        center: Pnt3::new(1.0, 0.0, 0.0),
+        radius: 0.5
+    };
+    let sphere2 = surface::Sphere {
+        center: Pnt3::new(-1.0, 0.0, 0.0),
+        radius: 0.5
+    };
+    let sphere3 = surface::Sphere {
         center: Pnt3::new(0.0, 0.0, 0.0),
         radius: 0.5
     };
+    let floor = surface::Sphere {
+        center: Pnt3::new(0.0, -1.0e4, 0.0),
+        radius: 1.0e4 - 0.5
+    };
     let light = surface::Sphere {
-        center: Pnt3::new(1.0, 1.3, -1.0),
-        radius: 0.5
+        center: Pnt3::new(0.0, 1.0, 0.0),
+        radius: 0.3
     };
 
     let scene = scene::Scene {
@@ -36,13 +48,29 @@ fn main() {
             object::Object {
                 surface: &sphere1,
                 material: material::MaterialBox::Reflective(Box::new(material::PerfectDiffuseMaterial {
-                    color: Vec3::new(1.0, 1.0, 1.0),
+                    color: Vec3::new(0.9, 0.5, 0.5)
+                }))
+            },
+            object::Object {
+                surface: &sphere2,
+                material: material::MaterialBox::Reflective(Box::new(material::PerfectSpecularMaterial))
+            },
+            object::Object {
+                surface: &sphere3,
+                material: material::MaterialBox::Reflective(Box::new(material::PerfectRefractiveMaterial {
+                    index_of_refraction: 1.440
+                }))
+            },
+            object::Object {
+                surface: &floor,
+                material: material::MaterialBox::Reflective(Box::new(material::PerfectDiffuseMaterial {
+                    color: Vec3::new(0.9, 0.5, 0.5)
                 }))
             },
             object::Object {
                 surface: &light,
                 material: material::MaterialBox::Emissive(Box::new(material::EmissiveMaterial {
-                    emissivity: 1.0
+                    emissivity: 10.0
                 }))
             },
         ]
