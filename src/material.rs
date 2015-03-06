@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 use std::num::Float;
 use rand::random;
-use na::{Dot, Vec3};
+use na::{Dot, Norm, Vec3};
 use intersection::Intersection;
 use ray::Ray;
 
@@ -46,7 +46,7 @@ fn random_vec_on_hemnisphere(normal: Vec3<f32>) -> Vec3<f32> {
     let z = (1.0 - random::<f32>()).sqrt();
 
     // Generate the vector about the xy-plane.
-    let v = Vec3::new(x, y, z);
+    let v = Vec3::new(x, y, z).normalize();
 
     // This vector is either within the hemnisphere or in the opposite
     // direction. Correct it if needed.
@@ -71,8 +71,8 @@ pub struct PerfectSpecularMaterial;
 
 impl ReflectiveMaterial for PerfectSpecularMaterial {
     fn bounce(&self, incoming: &Ray, intersection: &Intersection) -> Ray {
-        let direction = incoming.direction - intersection.normal
-            * 2.0 * incoming.direction.dot(&intersection.normal);
+        let direction = (incoming.direction - intersection.normal
+            * 2.0 * incoming.direction.dot(&intersection.normal)).normalize();
 
         Ray::new_from_air(incoming.origin, direction)
     }
