@@ -3,7 +3,7 @@ use std::num::Float;
 use rand::random;
 use na::{Dot, Norm, Vec3};
 use intersection::Intersection;
-use ray::Ray;
+use ray::{INDEX_OF_REFRACTION_AIR, Ray};
 
 // TODO: Boxing the enum rather than the individual components causes an ICE.
 pub enum MaterialBox {
@@ -84,12 +84,42 @@ pub struct PerfectRefractiveMaterial {
 
 impl ReflectiveMaterial for PerfectRefractiveMaterial {
     fn bounce(&self, incoming: &Ray, intersection: &Intersection) -> Ray {
-        let origin = intersection.position;
+        // Equations from http://graphics.stanford.edu/courses/cs148-10-summer/docs/2006--degreve--reflection_refraction.pdf
 
-        // TODO: Use the Fresnel equations and Snell's law to choose the right
-        // refracted path.
-        let direction = incoming.direction;
+        // TODO: Index of refraction varies with the light's wavelength.
 
-        Ray::new_from_air(origin, direction)
+        // Compare the direction of the incoming ray to the direction of the
+        // normal to see if the ray is entering or exiting the material.
+        let dir = incoming.direction.dot(&intersection.normal);
+
+        let (n1, n2) = if dir >= 0.0 {
+            // Normal and incoming ray are in the same direction, so the ray is
+            // exiting the refractive material.
+
+            // TODO: Entering... air?
+            (self.index_of_refraction, INDEX_OF_REFRACTION_AIR)
+        } else {
+            // Entering refractive material.
+            (incoming.index_of_refraction, self.index_of_refraction)
+        };
+
+        // Apply Snell's law to determine the direction of the new ray.
+        let n_ratio = n1 / n2;
+        let cost = -incoming.direction.dot(&intersection.normal);
+        let sin2t = n_ratio.powi(2) * (1.0 - cost.powi(2));
+
+        let t1 = incoming.direction * n_ratio;
+        let t2 = intersection.normal * (n_ratio * cost - (1.0 - sin2t).sqrt());
+
+        // The final direction is the sum of the vector in the original ray
+        // direction (t1) and the vector in the direction of the surface normal
+        // (t2).
+        let direction = (t1 + t2).normalize();
+
+        Ray {
+            origin: intersection.position,
+            direction: direction,
+            index_of_refraction: n2
+        }
     }
 }

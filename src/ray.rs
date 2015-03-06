@@ -1,6 +1,6 @@
 use na::{Pnt3, Vec3};
 
-static INDEX_OF_REFRACTION_AIR: f32 = 1.000293;
+pub static INDEX_OF_REFRACTION_AIR: f32 = 1.000293;
 
 pub struct Ray {
     // The starting point of the ray.
