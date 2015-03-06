@@ -34,10 +34,20 @@ impl Surface for Sphere {
             // Only sqrt det once we know we have to.
             let det = det2.sqrt();
 
-            // Choose the intersection with the minimum distance.
-            let dist = (-b + det).min(-b - det);
+            // Calculate the two solutions to the quadratic equation.
+            let t1 = (-b + det) / (2.0 * a);
+            let t2 = (-b - det) / (2.0 * a);
 
-            Some(Intersection::new_from_distance(dist, ray, self))
+            // Choose the positive intersection with the minimum distance.
+            let dist = if t1 > 0.0 && t1 < t2 {
+                Some(t1)
+            } else if t2 > 0.0 && t2 < t1 {
+                Some(t2)
+            } else {
+                None
+            };
+
+            dist.map(|d| Intersection::new_from_distance(d, ray, self))
         } else {
             None
         }
