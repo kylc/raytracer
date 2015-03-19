@@ -14,7 +14,7 @@ pub trait Integrator {
 // solve the rendering equation.
 pub struct MonteCarloIntegrator<'a> {
     pub camera: &'a Camera,
-    pub scene: &'a Scene<'a>,
+    pub scene: &'a Scene,
 
     // Image dimensions.
     pub width: usize,

@@ -3,12 +3,12 @@ use ray::Ray;
 use intersection::Intersection;
 use object::Object;
 
-pub struct Scene<'a> {
-    pub objects: Vec<Object<'a>>
+pub struct Scene {
+    pub objects: Vec<Object>
 }
 
-impl<'a> Scene<'a> {
-    pub fn intersects(&'a self, ray: &Ray) -> Option<(Intersection, &'a Object)> {
+impl Scene {
+    pub fn intersects(&self, ray: &Ray) -> Option<(Intersection, &Object)> {
         // Check if this ray intersects any objects in the scene.
         // TODO: This could perhaps be done easier with a filter_map and a
         // sort_by.

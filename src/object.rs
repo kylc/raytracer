@@ -1,7 +1,7 @@
 use surface::Surface;
 use material::MaterialBox;
 
-pub struct Object<'a> {
-    pub surface: &'a Surface,
+pub struct Object {
+    pub surface: Box<Surface>,
     pub material: MaterialBox
 }
