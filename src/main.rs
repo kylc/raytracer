@@ -127,11 +127,11 @@ fn main() {
 
     let integrator = integrator::MonteCarloIntegrator {
         camera: &camera,
+        scene: &scene,
         width: props.width,
         height: props.height,
         samples_per_pixel: 1000,
-        max_bounces: 5,
-        scene: &scene
+        max_bounces: 5
     };
 
     let screen = render::render(&props, &integrator);
