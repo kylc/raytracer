@@ -1,12 +1,12 @@
 use std::num::Float;
-use na::{Dot, Norm, Pnt3, Vec3};
+use na::{Cross, Dot, Norm, Pnt3, Vec3};
 use intersection::Intersection;
 use ray::Ray;
 
 pub trait Surface {
     // Check if a ray intersects with the surface.
     fn intersects(&self, ray: &Ray) -> Option<Intersection>;
-    fn normal_towards(&self, Pnt3<f32>) -> Vec3<f32>;
+    fn normal_towards(&self, point: Pnt3<f32>) -> Vec3<f32>;
 }
 
 pub struct Sphere {
