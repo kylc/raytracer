@@ -33,6 +33,11 @@ pub fn render(properties: &RenderProperties, camera: &Camera, scene: &Scene) -> 
 
             screen.set((x, y), color);
         }
+
+        let current_pixels = x;
+        let total_pixels = properties.width;
+
+        println!("{}% finished", current_pixels as f32 / total_pixels as f32 * 100.0);
     }
 
     screen
