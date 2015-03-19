@@ -118,8 +118,6 @@ fn main() {
     let props = render::RenderProperties {
         width: 500,
         height: 500,
-        samples_per_pixel: 1000,
-        max_bounces: 10
     };
 
     let camera = camera::Camera {
@@ -127,7 +125,16 @@ fn main() {
         direction: Vec3::new(0.0, 0.0, 1.0)
     };
 
-    let screen = render::render(&props, &camera, &scene);
+    let integrator = integrator::MonteCarloIntegrator {
+        camera: &camera,
+        width: props.width,
+        height: props.height,
+        samples_per_pixel: 1000,
+        max_bounces: 5,
+        scene: &scene
+    };
+
+    let screen = render::render(&props, &integrator);
     write_image("test.ppm", &screen);
 }
 

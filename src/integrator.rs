@@ -24,7 +24,7 @@ pub struct MonteCarloIntegrator<'a> {
     pub samples_per_pixel: u32,
 
     // How many reflections to continue tracing before giving up.
-    pub max_boundes: u32
+    pub max_bounces: u32
 }
 
 impl<'a> MonteCarloIntegrator<'a> {
@@ -75,7 +75,7 @@ impl<'a> Integrator for MonteCarloIntegrator<'a> {
             // the screen.
             let ray = self.camera.get_ray(x + jitter.0, y + jitter.1);
 
-            let contribution = self.trace_with_depth(&ray, self.max_boundes);
+            let contribution = self.trace_with_depth(&ray, self.max_bounces);
             color = color + contribution / self.samples_per_pixel as f32;
         }
 
