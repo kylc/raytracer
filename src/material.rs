@@ -92,47 +92,59 @@ impl ReflectiveMaterial for PerfectSpecularMaterial {
 }
 
 pub struct PerfectRefractiveMaterial {
-    pub index_of_refraction: f32
+    pub index_of_refraction: f32,
+
+    // Probability that a ray will be reflected rather than refracted.
+    pub reflect_prob: f32
 }
 
 impl ReflectiveMaterial for PerfectRefractiveMaterial {
     fn bounce(&self, incoming: &Ray, intersection: &Intersection) -> Ray {
-        // Equations from http://graphics.stanford.edu/courses/cs148-10-summer/docs/2006--degreve--reflection_refraction.pdf
+        let refract_or_reflect = random::<f32>();
+        if refract_or_reflect > self.reflect_prob {
+            // Refract
 
-        // TODO: Index of refraction varies with the light's wavelength.
+            // Equations from http://graphics.stanford.edu/courses/cs148-10-summer/docs/2006--degreve--reflection_refraction.pdf
 
-        // Compare the direction of the incoming ray to the direction of the
-        // normal to see if the ray is entering or exiting the material.
-        let dir = incoming.direction.dot(&intersection.normal);
+            // TODO: Index of refraction varies with the light's wavelength.
 
-        let (n1, n2) = if dir >= 0.0 {
-            // Normal and incoming ray are in the same direction, so the ray is
-            // exiting the refractive material.
+            // Compare the direction of the incoming ray to the direction of the
+            // normal to see if the ray is entering or exiting the material.
+            let dir = incoming.direction.dot(&intersection.normal);
 
-            // TODO: Entering... air?
-            (self.index_of_refraction, INDEX_OF_REFRACTION_AIR)
+            let (n1, n2) = if dir >= 0.0 {
+                // Normal and incoming ray are in the same direction, so the ray is
+                // exiting the refractive material.
+
+                // TODO: Entering... air?
+                (self.index_of_refraction, INDEX_OF_REFRACTION_AIR)
+            } else {
+                // Entering refractive material.
+                (incoming.index_of_refraction, self.index_of_refraction)
+            };
+
+            // Apply Snell's law to determine the direction of the new ray.
+            let n_ratio = n1 / n2;
+            let cost = -incoming.direction.dot(&intersection.normal);
+            let sin2t = n_ratio.powi(2) * (1.0 - cost.powi(2));
+
+            let t1 = incoming.direction * n_ratio;
+            let t2 = intersection.normal * (n_ratio * cost - (1.0 - sin2t).sqrt());
+
+            // The final direction is the sum of the vector in the original ray
+            // direction (t1) and the vector in the direction of the surface normal
+            // (t2).
+            let direction = (t1 + t2).normalize();
+
+            Ray {
+                origin: intersection.position,
+                direction: direction,
+                index_of_refraction: n2
+            }
         } else {
-            // Entering refractive material.
-            (incoming.index_of_refraction, self.index_of_refraction)
-        };
-
-        // Apply Snell's law to determine the direction of the new ray.
-        let n_ratio = n1 / n2;
-        let cost = -incoming.direction.dot(&intersection.normal);
-        let sin2t = n_ratio.powi(2) * (1.0 - cost.powi(2));
-
-        let t1 = incoming.direction * n_ratio;
-        let t2 = intersection.normal * (n_ratio * cost - (1.0 - sin2t).sqrt());
-
-        // The final direction is the sum of the vector in the original ray
-        // direction (t1) and the vector in the direction of the surface normal
-        // (t2).
-        let direction = (t1 + t2).normalize();
-
-        Ray {
-            origin: intersection.position,
-            direction: direction,
-            index_of_refraction: n2
+            // Reflect
+            let reflect_mat = PerfectSpecularMaterial;
+            reflect_mat.bounce(incoming, intersection)
         }
     }
 
