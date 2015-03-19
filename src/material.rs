@@ -17,6 +17,10 @@ pub struct EmissiveMaterial {
 
 pub trait ReflectiveMaterial {
     fn bounce(&self, incoming: &Ray, intersection: &Intersection) -> Ray;
+
+    // TODO: Are there some materials where the color depends on the incoming
+    // ray or the intersection? Subsurface scattering perhaps?
+    fn color(&self) -> Vec3<f32>;
 }
 
 pub struct PerfectDiffuseMaterial {
@@ -65,6 +69,10 @@ impl ReflectiveMaterial for PerfectDiffuseMaterial {
 
         Ray::new_from_air(origin, direction)
     }
+
+    fn color(&self) -> Vec3<f32> {
+        self.color
+    }
 }
 
 pub struct PerfectSpecularMaterial;
@@ -75,6 +83,11 @@ impl ReflectiveMaterial for PerfectSpecularMaterial {
             * 2.0 * incoming.direction.dot(&intersection.normal)).normalize();
 
         Ray::new_from_air(incoming.origin, direction)
+    }
+
+    fn color(&self) -> Vec3<f32> {
+        // TODO: Correct color?
+        Vec3::new(1.0, 1.0, 1.0)
     }
 }
 
@@ -121,5 +134,10 @@ impl ReflectiveMaterial for PerfectRefractiveMaterial {
             direction: direction,
             index_of_refraction: n2
         }
+    }
+
+    fn color(&self) -> Vec3<f32> {
+        // TODO: Correct color?
+        Vec3::new(1.0, 1.0, 1.0)
     }
 }

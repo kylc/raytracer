@@ -10,70 +10,121 @@ use na::{DMat, Indexable, Pnt3, Vec3};
 use renderer::*;
 
 fn main() {
-    let props = render::RenderProperties {
-        width: 300,
-        height: 300,
-        samples_per_pixel: 300,
-        max_bounces: 6
-    };
-
-    let camera = camera::Camera {
-        position: Pnt3::new(0.0, 0.0, -2.0),
-        direction: Vec3::new(0.0, 0.0, 1.0)
-    };
-
     let sphere1 = surface::Sphere {
-        center: Pnt3::new(1.0, 0.0, 0.0),
-        radius: 0.5
+        center: Pnt3::new(-0.75, 0.25, 0.75),
+        radius: 0.25
     };
     let sphere2 = surface::Sphere {
-        center: Pnt3::new(-1.0, 0.0, 0.0),
-        radius: 0.5
+        center: Pnt3::new(0.75, 0.25, 0.75),
+        radius: 0.25
+    };
+    let cool_light = surface::Sphere {
+        center: Pnt3::new(-0.35, 1.0, -0.2),
+        radius: 0.1
     };
     let sphere3 = surface::Sphere {
-        center: Pnt3::new(0.0, 0.0, 0.0),
-        radius: 0.5
+        center: Pnt3::new(0.0, 0.45, 0.0),
+        radius: 0.25
     };
-    let floor = surface::Sphere {
-        center: Pnt3::new(0.0, -1.0e4, 0.0),
-        radius: 1.0e4 - 0.5
+    let back = surface::Plane {
+        normal: Vec3::new(0.0, 0.0, -1.0),
+        offset: 1.0
     };
-    let light = surface::Sphere {
-        center: Pnt3::new(0.0, 1.0, 0.0),
-        radius: 0.3
+    let front = surface::Plane {
+        normal: Vec3::new(0.0, 0.0, 1.0),
+        offset: -2.0
+    };
+    let floor = surface::Plane {
+        normal: Vec3::new(0.0, 1.0, 0.0),
+        offset: 0.0
+    };
+    let left = surface::Plane {
+        normal: Vec3::new(1.0, 0.0, 0.0),
+        offset: -1.0
+    };
+    let right = surface::Plane {
+        normal: Vec3::new(-1.0, 0.0, 0.0),
+        offset: 1.0
+    };
+    let light = surface::Plane {
+        normal: Vec3::new(0.0, -1.5, 0.0),
+        offset: 2.0
     };
 
     let scene = scene::Scene {
         objects: vec![
+            // object::Object {
+            //     surface: Box::new(sphere1),
+            //     material: material::MaterialBox::Reflective(Box::new(material::PerfectDiffuseMaterial {
+            //         color: Vec3::new(1.0, 1.0, 1.0)
+            //     }))
+            // },
+            // object::Object {
+            //     surface: Box::new(sphere2),
+            //     material: material::MaterialBox::Reflective(Box::new(material::PerfectSpecularMaterial))
+            // },
             object::Object {
-                surface: &sphere1,
-                material: material::MaterialBox::Reflective(Box::new(material::PerfectDiffuseMaterial {
-                    color: Vec3::new(0.9, 0.5, 0.5)
-                }))
-            },
-            object::Object {
-                surface: &sphere2,
-                material: material::MaterialBox::Reflective(Box::new(material::PerfectSpecularMaterial))
-            },
-            object::Object {
-                surface: &sphere3,
+                surface: Box::new(sphere3),
                 material: material::MaterialBox::Reflective(Box::new(material::PerfectRefractiveMaterial {
-                    index_of_refraction: 1.440
+                    index_of_refraction: 1.440,
+                    reflect_prob: 0.1
                 }))
             },
             object::Object {
-                surface: &floor,
+                surface: Box::new(back),
                 material: material::MaterialBox::Reflective(Box::new(material::PerfectDiffuseMaterial {
-                    color: Vec3::new(0.9, 0.5, 0.5)
+                    color: Vec3::new(1.0, 1.0, 1.0)
                 }))
             },
             object::Object {
-                surface: &light,
-                material: material::MaterialBox::Emissive(Box::new(material::EmissiveMaterial {
-                    emissivity: 10.0
+                surface: Box::new(front),
+                material: material::MaterialBox::Reflective(Box::new(material::PerfectDiffuseMaterial {
+                    color: Vec3::new(1.0, 1.0, 1.0)
                 }))
             },
+            object::Object {
+                surface: Box::new(floor),
+                material: material::MaterialBox::Reflective(Box::new(material::PerfectDiffuseMaterial {
+                    color: Vec3::new(1.0, 1.0, 1.0)
+                }))
+            },
+            object::Object {
+                surface: Box::new(left),
+                material: material::MaterialBox::Reflective(Box::new(material::PerfectDiffuseMaterial {
+                    color: Vec3::new(0.5, 0.5, 0.9)
+                }))
+            },
+            object::Object {
+                surface: Box::new(right),
+                material: material::MaterialBox::Reflective(Box::new(material::PerfectDiffuseMaterial {
+                    color: Vec3::new(0.5, 0.9, 0.5)
+                }))
+            },
+            object::Object {
+                surface: Box::new(cool_light),
+                material: material::MaterialBox::Emissive(Box::new(material::EmissiveMaterial {
+                    emissivity: 50.0
+                }))
+            },
+            // object::Object {
+            //     surface: Box::new(light),
+            //     material: material::MaterialBox::Emissive(Box::new(material::EmissiveMaterial {
+            //         emissivity: 0.5
+            //     }))
+            // },
         ]
+    };
+
+    let props = render::RenderProperties {
+        width: 500,
+        height: 500,
+        samples_per_pixel: 1000,
+        max_bounces: 10
+    };
+
+    let camera = camera::Camera {
+        position: Pnt3::new(0.0, 0.3, -1.0),
+        direction: Vec3::new(0.0, 0.0, 1.0)
     };
 
     let screen = render::render(&props, &camera, &scene);

@@ -50,7 +50,7 @@ impl<'a> MonteCarloIntegrator<'a> {
                         // contribution.
                         let new_ray = mat.bounce(&ray, &intersection);
 
-                        self.trace_with_depth(&new_ray, remaining_depth - 1)
+                        mat.color() * self.trace_with_depth(&new_ray, remaining_depth - 1)
                     }
                 }
             },
