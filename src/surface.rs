@@ -59,3 +59,80 @@ impl Surface for Sphere {
         (point - self.center).normalize()
     }
 }
+
+pub struct Plane {
+    pub normal: Vec3<f32>,
+    pub offset: f32
+}
+
+impl Surface for Plane {
+    fn intersects(&self, ray: &Ray) -> Option<Intersection> {
+        let origin = ray.origin - self.offset;
+
+        let d = self.normal.dot(&ray.direction);
+        if d == 0.0 { return None };
+        let t = -self.normal.dot(&origin.as_vec()) / d;
+
+        if t > 0.0 {
+            Some(Intersection::new_from_distance(t, &ray, self))
+        } else {
+            None
+        }
+    }
+
+    fn normal_towards(&self, point: Pnt3<f32>) -> Vec3<f32> {
+        self.normal
+    }
+}
+
+pub struct Triangle {
+    pub vertices: [Pnt3<f32>; 3]
+}
+
+impl Surface for Triangle {
+    fn intersects(&self, ray: &Ray) -> Option<Intersection> {
+        // Per http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
+        let e1 = self.vertices[1] - self.vertices[0];
+        let e2 = self.vertices[2] - self.vertices[0];
+        let pvec = ray.direction.cross(&e2);
+
+        let det = pvec.dot(&e1);
+        let inv_det = 1.0 / det;
+
+        let tvec = ray.origin - self.vertices[0];
+        let u = tvec.dot(&pvec) * inv_det;
+
+        if u < 0.0 || u > 1.0 {
+            return None;
+        }
+
+        let qvec = tvec.cross(&e1);
+        let v = ray.direction.dot(&qvec) * inv_det;
+
+        if v < 0.0 || u + v > 1.0 {
+            return None;
+        }
+
+        let t = e2.dot(&qvec) * inv_det;
+        if t > 0.0 {
+            Some(Intersection::new_from_distance(t, &ray, self))
+        } else {
+            None
+        }
+    }
+
+    fn normal_towards(&self, point: Pnt3<f32>) -> Vec3<f32> {
+        let u = self.vertices[1] - self.vertices[0];
+        let v = self.vertices[2] - self.vertices[0];
+
+        let normal = u.cross(&v).normalize();
+
+        // The triangle is two-sided, so we need to figure out which normal we
+        // should return.
+        if normal.dot(&point.as_vec()) > 0.0 {
+            normal
+        } else {
+            -normal
+        }
+    }
+}
