@@ -115,14 +115,14 @@ fn main() {
         ]
     };
 
-    let props = render::RenderProperties {
-        width: 500,
-        height: 500,
-    };
-
     let camera = camera::Camera {
         position: Pnt3::new(0.0, 0.3, -1.0),
         direction: Vec3::new(0.0, 0.0, 1.0)
+    };
+
+    let props = render::RenderProperties {
+        width: 500,
+        height: 500,
     };
 
     let integrator = integrator::MonteCarloIntegrator {
