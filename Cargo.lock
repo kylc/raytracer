@@ -10,7 +10,7 @@ dependencies = [
 [[package]]
 name = "image"
 version = "0.2.1"
-source = "git+https://github.com/PistonDevelopers/image#3520458dd17fa6ad5cfbf0fee7f73f4afdd32813"
+source = "git+https://github.com/PistonDevelopers/image#f11e2f193f42d51d14f026c19c8473743dfb5ef1"
 dependencies = [
  "num 0.1.15 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -31,7 +31,7 @@ version = "0.2.5"
 source = "git+https://github.com/sebcrozet/nalgebra#32f207881e0470beffeea012b1886fc28a2b4fff"
 dependencies = [
  "rand 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "rustc-serialize 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -59,6 +59,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "rustc-serialize"
-version = "0.3.2"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
