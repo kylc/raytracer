@@ -2,17 +2,23 @@
 name = "renderer"
 version = "0.0.1"
 dependencies = [
- "image 0.2.1 (git+https://github.com/PistonDevelopers/image)",
- "nalgebra 0.2.5 (git+https://github.com/sebcrozet/nalgebra)",
- "rand 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "image 0.3.0 (git+https://github.com/PistonDevelopers/image)",
+ "nalgebra 0.2.7 (git+https://github.com/sebcrozet/nalgebra)",
+ "rand 0.3.0 (git+https://github.com/rust-lang/rand)",
 ]
 
 [[package]]
+name = "byteorder"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
 name = "image"
-version = "0.2.1"
-source = "git+https://github.com/PistonDevelopers/image#f11e2f193f42d51d14f026c19c8473743dfb5ef1"
+version = "0.3.0"
+source = "git+https://github.com/PistonDevelopers/image#ca0f68775a8d35984506a025eefe61baa3b64535"
 dependencies = [
- "num 0.1.15 (registry+https://github.com/rust-lang/crates.io-index)",
+ "byteorder 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "num 0.1.18 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -26,26 +32,34 @@ version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
-name = "nalgebra"
-version = "0.2.5"
-source = "git+https://github.com/sebcrozet/nalgebra#32f207881e0470beffeea012b1886fc28a2b4fff"
+name = "log"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "rand 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "rustc-serialize 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "nalgebra"
+version = "0.2.7"
+source = "git+https://github.com/sebcrozet/nalgebra#0988b837dce4fc5428c54f6349c554f6d4681b92"
+dependencies = [
+ "rand 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "num"
-version = "0.1.15"
+version = "0.1.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "rand 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "rustc-serialize 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "rand"
-version = "0.1.4"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "libc 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -53,12 +67,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "rustc-serialize"
-version = "0.2.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+name = "rand"
+version = "0.3.0"
+source = "git+https://github.com/rust-lang/rand#7cadee3820ad09bfb36e1d30ef082eac0a691223"
+dependencies = [
+ "libc 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "rustc-serialize"
-version = "0.3.3"
+version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
