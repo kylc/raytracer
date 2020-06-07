@@ -1,17 +1,16 @@
-use std::num::Float;
-use na::{Cross, Dot, Norm, Pnt3, Vec3};
 use intersection::Intersection;
+use na::{Point3, Vector3};
 use ray::Ray;
 
 pub trait Surface {
     // Check if a ray intersects with the surface.
     fn intersects(&self, ray: &Ray) -> Option<Intersection>;
-    fn normal_towards(&self, point: Pnt3<f32>) -> Vec3<f32>;
+    fn normal_towards(&self, point: Point3<f32>) -> Vector3<f32>;
 }
 
 pub struct Sphere {
-    pub center: Pnt3<f32>,
-    pub radius: f32
+    pub center: Point3<f32>,
+    pub radius: f32,
 }
 
 impl Surface for Sphere {
@@ -20,9 +19,9 @@ impl Surface for Sphere {
         let oc = ray.origin - self.center;
 
         // Find quadratic equation coefficients.
-        let a = ray.direction.sqnorm();
+        let a = ray.direction.norm_squared();
         let b = 2.0 * ray.direction.dot(&oc);
-        let c = oc.sqnorm() - self.radius.powi(2);
+        let c = oc.norm_squared() - self.radius.powi(2);
 
         let det2 = b.powi(2) - 4.0 * a * c;
 
@@ -53,7 +52,7 @@ impl Surface for Sphere {
         }
     }
 
-    fn normal_towards(&self, point: Pnt3<f32>) -> Vec3<f32> {
+    fn normal_towards(&self, point: Point3<f32>) -> Vector3<f32> {
         // The normal is a ray traced from the center of the sphere to the given
         // point, normalized.
         (point - self.center).normalize()
@@ -61,17 +60,19 @@ impl Surface for Sphere {
 }
 
 pub struct Plane {
-    pub normal: Vec3<f32>,
-    pub offset: f32
+    pub normal: Vector3<f32>,
+    pub offset: f32,
 }
 
 impl Surface for Plane {
     fn intersects(&self, ray: &Ray) -> Option<Intersection> {
-        let origin = ray.origin - self.offset;
+        let origin = ray.origin.coords.map(|x| x - self.offset);
 
         let d = self.normal.dot(&ray.direction);
-        if d == 0.0 { return None };
-        let t = -self.normal.dot(&origin.as_vec()) / d;
+        if d == 0.0 {
+            return None;
+        };
+        let t = -self.normal.dot(&origin) / d;
 
         if t > 0.0 {
             Some(Intersection::new_from_distance(t, &ray, self))
@@ -80,13 +81,13 @@ impl Surface for Plane {
         }
     }
 
-    fn normal_towards(&self, point: Pnt3<f32>) -> Vec3<f32> {
+    fn normal_towards(&self, _point: Point3<f32>) -> Vector3<f32> {
         self.normal
     }
 }
 
 pub struct Triangle {
-    pub vertices: [Pnt3<f32>; 3]
+    pub vertices: [Point3<f32>; 3],
 }
 
 impl Surface for Triangle {
@@ -121,7 +122,7 @@ impl Surface for Triangle {
         }
     }
 
-    fn normal_towards(&self, point: Pnt3<f32>) -> Vec3<f32> {
+    fn normal_towards(&self, point: Point3<f32>) -> Vector3<f32> {
         let u = self.vertices[1] - self.vertices[0];
         let v = self.vertices[2] - self.vertices[0];
 
@@ -129,7 +130,7 @@ impl Surface for Triangle {
 
         // The triangle is two-sided, so we need to figure out which normal we
         // should return.
-        if normal.dot(&point.as_vec()) > 0.0 {
+        if normal.dot(&point.coords) > 0.0 {
             normal
         } else {
             -normal

@@ -1,14 +1,9 @@
 [package]
-
 name = "renderer"
 version = "0.0.1"
 authors = ["Kyle Cesare <kcesare@gmail.com>"]
 
-[dependencies.image]
-git = "https://github.com/PistonDevelopers/image"
-
-[dependencies.nalgebra]
-git = "https://github.com/sebcrozet/nalgebra"
-
-[dependencies.rand]
-git = "https://github.com/rust-lang/rand"
+[dependencies]
+nalgebra = "0.21.0"
+image = "0.23.4"
+rand = "0.7.3"

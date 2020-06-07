@@ -1,10 +1,10 @@
-use std::num::Float;
-use ray::Ray;
 use intersection::Intersection;
 use object::Object;
+use ray::Ray;
+use std::f32;
 
 pub struct Scene {
-    pub objects: Vec<Object>
+    pub objects: Vec<Object>,
 }
 
 impl Scene {
@@ -15,15 +15,14 @@ impl Scene {
         self.objects.iter().fold(None, |a, ref b| {
             let prev_distance = match a {
                 Some((ref intersection, _)) => intersection.distance,
-                None => Float::infinity()
-
+                None => f32::INFINITY,
             };
 
             match b.surface.intersects(&ray) {
                 Some(ref intersection) if intersection.distance < prev_distance => {
                     Some((*intersection, b))
-                },
-                _   => a
+                }
+                _ => a,
             }
         })
     }

@@ -1,7 +1,7 @@
-use surface::Surface;
 use material::MaterialBox;
+use surface::Surface;
 
 pub struct Object {
-    pub surface: Box<Surface>,
-    pub material: MaterialBox
+    pub surface: Box<dyn Surface>,
+    pub material: MaterialBox,
 }

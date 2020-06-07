@@ -1,23 +1,23 @@
 #![feature(core)]
 
 // TODO: Why do I need these here if they're already in tests/lib.rs?
+extern crate nalgebra as na;
 extern crate rand;
-extern crate "nalgebra" as na;
 extern crate renderer;
 
-use std::num::Float;
-use std::f32::consts::{PI, PI_2};
+use na::Point3;
 use rand::random;
-use na::{Pnt3};
-use renderer::surface::{Surface, Sphere};
 use renderer::ray::Ray;
+use renderer::surface::{Sphere, Surface};
+use std::f32::consts::{PI, PI_2};
+use std::num::Float;
 
 #[test]
 fn sphere_test() {
     // Generate a sphere
     let sphere1 = Sphere {
-        center: Pnt3::new(5.0, 10.0, 0.0),
-        radius: 1.0
+        center: Point3::new(5.0, 10.0, 0.0),
+        radius: 1.0,
     };
 
     // Find a bunch of random points in the sphere
@@ -28,12 +28,14 @@ fn sphere_test() {
         let phi = random::<f32>() * PI_2;
 
         // Convert to Cartesian
-        let pnt = Pnt3::new(sphere1.center.x + r * theta.sin() * phi.cos(),
-                            sphere1.center.y + r * theta.sin() * phi.sin(),
-                            sphere1.center.z + r * theta.cos());
+        let pnt = Point3::new(
+            sphere1.center.x + r * theta.sin() * phi.cos(),
+            sphere1.center.y + r * theta.sin() * phi.sin(),
+            sphere1.center.z + r * theta.cos(),
+        );
 
         // Cast a ray to this point from somewhere else
-        let origin = Pnt3::new(0.0, 0.0, -100.0);
+        let origin = Point3::new(0.0, 0.0, -100.0);
         let ray = Ray::new_from_air(origin, pnt - origin);
 
         // Check for intersection
@@ -50,7 +52,7 @@ fn sphere_test() {
     //     let phi = random::<f32>() * PI_2;
     //
     //     // Convert to Cartesian
-    //     let pnt = Pnt3::new(sphere1.center.x + r * theta.sin() * phi.cos(),
+    //     let pnt = Point3::new(sphere1.center.x + r * theta.sin() * phi.cos(),
     //                         sphere1.center.y + r * theta.sin() * phi.sin(),
     //                         sphere1.center.z + r * theta.cos());
     //

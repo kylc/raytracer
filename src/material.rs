@@ -1,18 +1,17 @@
-use std::f32::consts::PI;
-use std::num::Float;
-use rand::random;
-use na::{Dot, Norm, Vec3};
 use intersection::Intersection;
-use ray::{INDEX_OF_REFRACTION_AIR, Ray};
+use na::Vector3;
+use rand::random;
+use ray::{Ray, INDEX_OF_REFRACTION_AIR};
+use std::f32::consts::PI;
 
 // TODO: Boxing the enum rather than the individual components causes an ICE.
 pub enum MaterialBox {
     Emissive(Box<EmissiveMaterial>),
-    Reflective(Box<ReflectiveMaterial>)
+    Reflective(Box<dyn ReflectiveMaterial>),
 }
 
 pub struct EmissiveMaterial {
-    pub emissivity: f32
+    pub emissivity: f32,
 }
 
 pub trait ReflectiveMaterial {
@@ -20,16 +19,16 @@ pub trait ReflectiveMaterial {
 
     // TODO: Are there some materials where the color depends on the incoming
     // ray or the intersection? Subsurface scattering perhaps?
-    fn color(&self) -> Vec3<f32>;
+    fn color(&self) -> Vector3<f32>;
 }
 
 pub struct PerfectDiffuseMaterial {
-    pub color: Vec3<f32>
+    pub color: Vector3<f32>,
 }
 
 // Find a cosine-distributed random vector on the surface of the hemnisphere
 // about the given normal.
-fn random_vec_on_hemnisphere(normal: Vec3<f32>) -> Vec3<f32> {
+fn random_vec_on_hemnisphere(normal: Vector3<f32>) -> Vector3<f32> {
     // Use a cosine instead of uniform distribution. This is because the diffuse
     // lighting term in the rendering equation looks like:
     //
@@ -50,7 +49,7 @@ fn random_vec_on_hemnisphere(normal: Vec3<f32>) -> Vec3<f32> {
     let z = (1.0 - random::<f32>()).sqrt();
 
     // Generate the vector about the xy-plane.
-    let v = Vec3::new(x, y, z).normalize();
+    let v = Vector3::new(x, y, z).normalize();
 
     // This vector is either within the hemnisphere or in the opposite
     // direction. Correct it if needed.
@@ -63,14 +62,14 @@ fn random_vec_on_hemnisphere(normal: Vec3<f32>) -> Vec3<f32> {
 }
 
 impl ReflectiveMaterial for PerfectDiffuseMaterial {
-    fn bounce(&self, incoming: &Ray, intersection: &Intersection) -> Ray {
+    fn bounce(&self, _incoming: &Ray, intersection: &Intersection) -> Ray {
         let origin = intersection.position;
         let direction = random_vec_on_hemnisphere(intersection.normal);
 
         Ray::new_from_air(origin, direction)
     }
 
-    fn color(&self) -> Vec3<f32> {
+    fn color(&self) -> Vector3<f32> {
         self.color
     }
 }
@@ -79,15 +78,16 @@ pub struct PerfectSpecularMaterial;
 
 impl ReflectiveMaterial for PerfectSpecularMaterial {
     fn bounce(&self, incoming: &Ray, intersection: &Intersection) -> Ray {
-        let direction = (incoming.direction - intersection.normal
-            * 2.0 * incoming.direction.dot(&intersection.normal)).normalize();
+        let direction = (incoming.direction
+            - intersection.normal * 2.0 * incoming.direction.dot(&intersection.normal))
+        .normalize();
 
         Ray::new_from_air(incoming.origin, direction)
     }
 
-    fn color(&self) -> Vec3<f32> {
+    fn color(&self) -> Vector3<f32> {
         // TODO: Correct color?
-        Vec3::new(1.0, 1.0, 1.0)
+        Vector3::new(1.0, 1.0, 1.0)
     }
 }
 
@@ -95,7 +95,7 @@ pub struct PerfectRefractiveMaterial {
     pub index_of_refraction: f32,
 
     // Probability that a ray will be reflected rather than refracted.
-    pub reflect_prob: f32
+    pub reflect_prob: f32,
 }
 
 impl ReflectiveMaterial for PerfectRefractiveMaterial {
@@ -138,8 +138,8 @@ impl ReflectiveMaterial for PerfectRefractiveMaterial {
 
             Ray {
                 origin: intersection.position,
-                direction: direction,
-                index_of_refraction: n2
+                direction,
+                index_of_refraction: n2,
             }
         } else {
             // Reflect
@@ -148,8 +148,8 @@ impl ReflectiveMaterial for PerfectRefractiveMaterial {
         }
     }
 
-    fn color(&self) -> Vec3<f32> {
+    fn color(&self) -> Vector3<f32> {
         // TODO: Correct color?
-        Vec3::new(1.0, 1.0, 1.0)
+        Vector3::new(1.0, 1.0, 1.0)
     }
 }
