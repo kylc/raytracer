@@ -1,5 +1,3 @@
-#![feature(core)]
-
 // TODO: Why do I need these here if they're already in tests/lib.rs?
 extern crate nalgebra as na;
 extern crate rand;
@@ -9,8 +7,7 @@ use na::Point3;
 use rand::random;
 use renderer::ray::Ray;
 use renderer::surface::{Sphere, Surface};
-use std::f32::consts::{PI, PI_2};
-use std::num::Float;
+use std::f32::consts::{PI, FRAC_PI_2};
 
 #[test]
 fn sphere_test() {
@@ -25,7 +22,7 @@ fn sphere_test() {
         // Generate random spherical coordinates
         let r = random::<f32>();
         let theta = random::<f32>() * PI;
-        let phi = random::<f32>() * PI_2;
+        let phi = random::<f32>() * FRAC_PI_2;
 
         // Convert to Cartesian
         let pnt = Point3::new(
